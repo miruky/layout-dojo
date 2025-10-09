@@ -1,8 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img">
   <title>layout-dojo</title>
-  <rect x="2" y="2" width="60" height="60" rx="14" fill="#15171c"/>
-  <path d="M 22 12 V 52 M 42 12 V 52 M 12 22 H 52 M 12 42 H 52" fill="none" stroke="#4a4e59" stroke-width="2" stroke-linecap="round"/>
-  <circle cx="32" cy="32" r="6.5" fill="#748ffc"/>
-  <circle cx="47" cy="17" r="4" fill="#cfc6b2"/>
-  <circle cx="17" cy="47" r="4" fill="#cfc6b2"/>
+  <style>
+    .bg { fill: #f3efe5; }
+    .fr { stroke: #d2c9b5; }
+    .gr { stroke: #b6ab93; }
+    .st { fill: #26241e; }
+    .ac { fill: #b8472e; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #1c1a14; }
+      .fr { stroke: #393528; }
+      .gr { stroke: #4b4636; }
+      .st { fill: #d8d2c2; }
+      .ac { fill: #de6a4b; }
+    }
+  </style>
+  <rect x="2" y="2" width="60" height="60" rx="14" class="bg"/>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="none" class="fr" stroke-width="1.5"/>
+  <path d="M 25 13 V 51 M 42 13 V 51 M 13 25 H 51 M 13 42 H 51" fill="none" class="gr" stroke-width="2" stroke-linecap="round"/>
+  <rect x="17" y="17" width="15" height="15" rx="4" class="ac"/>
+  <circle cx="46" cy="46" r="5" class="st"/>
+  <circle cx="46.5" cy="18.5" r="3.5" class="st"/>
 </svg>
