@@ -47,3 +47,19 @@ export function judge(target: Rect[], actual: Rect[], tolerance: number = TOLERA
     stones,
   };
 }
+
+// 石がお手本からどれだけずれているかを、進むべき向きの言葉で表す。
+// dx/dy/dw/dh は「回答 − お手本」なので、正なら逆向きに動かして詰める。
+export function describeDiff(stone: StoneDiff, tolerance: number = TOLERANCE): string {
+  const px = (value: number) => Math.round(Math.abs(value));
+  const parts: string[] = [];
+  if (stone.dx > tolerance) parts.push(`左へ ${px(stone.dx)}px`);
+  else if (stone.dx < -tolerance) parts.push(`右へ ${px(stone.dx)}px`);
+  if (stone.dy > tolerance) parts.push(`上へ ${px(stone.dy)}px`);
+  else if (stone.dy < -tolerance) parts.push(`下へ ${px(stone.dy)}px`);
+  if (stone.dw > tolerance) parts.push(`幅を ${px(stone.dw)}px 詰める`);
+  else if (stone.dw < -tolerance) parts.push(`幅を ${px(stone.dw)}px 広げる`);
+  if (stone.dh > tolerance) parts.push(`高さを ${px(stone.dh)}px 詰める`);
+  else if (stone.dh < -tolerance) parts.push(`高さを ${px(stone.dh)}px 広げる`);
+  return parts.join('、');
+}
