@@ -60,7 +60,8 @@ app.innerHTML = `
     <div class="layout">
       <nav class="level-nav" aria-label="お題一覧">
         <div class="level-nav-head">
-          <span class="kicker">Keiko</span>
+          <span class="kicker">稽古 / Keiko</span>
+          <span class="nav-hint"><kbd>[</kbd><kbd>]</kbd> で移動</span>
         </div>
         <ol class="level-list" id="level-list"></ol>
       </nav>
@@ -269,6 +270,19 @@ editor.addEventListener('keydown', (event) => {
     editor.value = `${value.slice(0, selectionStart)}  ${value.slice(selectionEnd)}`;
     editor.selectionStart = selectionStart + 2;
     editor.selectionEnd = selectionStart + 2;
+  }
+});
+
+// お題の移動: [ で前のお題、] で次のお題。エディタ入力中や修飾キー併用時は無効。
+document.addEventListener('keydown', (event) => {
+  if (event.target === editor) return;
+  if (event.metaKey || event.ctrlKey || event.altKey) return;
+  if (event.key === ']') {
+    event.preventDefault();
+    selectLevel(Math.min(current + 1, levels.length - 1));
+  } else if (event.key === '[') {
+    event.preventDefault();
+    selectLevel(Math.max(current - 1, 0));
   }
 });
 
