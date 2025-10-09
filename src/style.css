@@ -1,41 +1,95 @@
+/*
+  layout-dojo — 枯山水の道場。砂庭に石を据えて、FlexboxとGridの間合いを稽古する。
+  箱と影を積まず、和紙の地・墨の石・一点の朱・罫線と余白で構成する。
+  editor は墨を磨る硯に見立てた暗い面。装飾は最小、主役は庭の石。
+*/
+
 :root {
   color-scheme: light dark;
-  --bg: #f4f1ea;
-  --surface: #fdfcf9;
-  --surface-2: #ece8de;
-  --text: #26272b;
-  --muted: #6e6f76;
-  --border: #ddd8cc;
-  --accent: #4263eb;
-  --accent-soft: #e7ecfd;
-  --error: #c92a2a;
-  --sand: #efe9dc;
-  --sand-line: #e4dccb;
-  --ink: #2b2d33;
-  --ink-text: #f1f0ec;
-  --ghost: #b4ab97;
-  --editor-bg: #15171c;
-  --editor-text: #d7dae0;
-  --shadow: 0 1px 2px rgb(60 50 30 / 0.05), 0 8px 24px rgb(60 50 30 / 0.08);
+
+  /* 和紙と墨。温度のある中立色で、純白・純黒は避ける。 */
+  --washi: #f3efe5;
+  --surface: #faf7ef;
+  --sumi: #211f1a;
+  --sumi-soft: #635f56;
+  --sumi-faint: #948f84;
+  --rule: #e4ddcd;
+  --rule-strong: #d2c9b5;
+
+  /* 砂庭と石 */
+  --sand: #ece4d3;
+  --sand-line: #e2d9c4;
+  --stone: #26241e;
+  --stone-text: #f2efe6;
+  --ghost: #b6ab93;
+
+  /* 硯(エディタ) */
+  --suzuri: #211f19;
+  --suzuri-text: #d9d4c6;
+  --suzuri-faint: #8c8678;
+
+  /* 朱 — 印・現在地・合格に使う唯一のアクセント */
+  --shu: #b8472e;
+  --shu-ink: #99381f; /* 地に乗せる文字用(AA確保) */
+  --shu-wash: #f1e1d9;
+
+  --serif: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif;
+  --sans: 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif;
+  --mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+
+  --shell: 70rem;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
+/* 手動切替(ダーク) */
+:root[data-theme='dark'] {
+  --washi: #15140f;
+  --surface: #1c1a14;
+  --sumi: #e9e4d6;
+  --sumi-soft: #a8a294;
+  --sumi-faint: #7d786b;
+  --rule: #2a2820;
+  --rule-strong: #393528;
+
+  --sand: #1b1913;
+  --sand-line: #23201a;
+  --stone: #d8d2c2; /* 暗い砂では石を骨色にして浮かせる */
+  --stone-text: #211f18;
+  --ghost: #4b4636;
+
+  --suzuri: #100f0b;
+  --suzuri-text: #d2ccbd;
+  --suzuri-faint: #797466;
+
+  --shu: #de6a4b;
+  --shu-ink: #e8927a;
+  --shu-wash: #2c1a14;
+}
+
+/* システム追従(手動でlightを選んでいないとき) */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #131419;
-    --surface: #1b1d23;
-    --surface-2: #23252d;
-    --text: #e7e8ea;
-    --muted: #9a9ea8;
-    --border: #2e3138;
-    --accent: #748ffc;
-    --accent-soft: #232c4d;
-    --error: #ff8787;
-    --sand: #1e2027;
-    --sand-line: #262934;
-    --ink: #e3e4e8;
-    --ink-text: #1d1f24;
-    --ghost: #565b68;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 24px rgb(0 0 0 / 0.35);
+  :root:not([data-theme='light']) {
+    --washi: #15140f;
+    --surface: #1c1a14;
+    --sumi: #e9e4d6;
+    --sumi-soft: #a8a294;
+    --sumi-faint: #7d786b;
+    --rule: #2a2820;
+    --rule-strong: #393528;
+
+    --sand: #1b1913;
+    --sand-line: #23201a;
+    --stone: #d8d2c2;
+    --stone-text: #211f18;
+    --ghost: #4b4636;
+
+    --suzuri: #100f0b;
+    --suzuri-text: #d2ccbd;
+    --suzuri-faint: #797466;
+
+    --shu: #de6a4b;
+    --shu-ink: #e8927a;
+    --shu-wash: #2c1a14;
   }
 }
 
@@ -45,212 +99,389 @@
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.65;
+html {
+  scroll-behavior: smooth;
 }
 
-a {
-  color: var(--accent);
-  text-underline-offset: 3px;
+body {
+  font-family: var(--sans);
+  background: var(--washi);
+  color: var(--sumi);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* 小見出し(キッカー)。字間を広げた小さなラテン字で階層の頂を作る。 */
+.kicker {
+  font-size: 11px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--shu-ink);
+  font-weight: 600;
 }
 
 .app {
-  max-width: 1160px;
+  max-width: var(--shell);
   margin: 0 auto;
-  padding: 24px clamp(16px, 3vw, 40px) 40px;
+  padding: clamp(24px, 4vw, 48px) clamp(18px, 4vw, 56px) 56px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
   min-height: 100vh;
 }
 
-/* ヘッダー */
+/* ── ヘッダー ── */
 
 .app-header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 16px;
+  gap: 24px;
   flex-wrap: wrap;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--rule);
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
 }
 
 .brand-mark {
-  width: 44px;
-  height: 44px;
+  width: 46px;
+  height: 46px;
   flex: none;
 }
 
 .mark-bg {
-  fill: #15171c;
+  fill: none;
+  stroke: var(--rule-strong);
+  stroke-width: 1.5;
 }
 
 .mark-grid {
   fill: none;
-  stroke: #4a4e59;
+  stroke: var(--sumi-faint);
   stroke-width: 2;
   stroke-linecap: round;
 }
 
 .mark-stone {
-  fill: #cfc6b2;
+  fill: var(--sumi-soft);
 }
 
 .mark-stone-accent {
-  fill: #748ffc;
+  fill: var(--shu);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .brand-text h1 {
-  font-size: 1.3rem;
-  letter-spacing: 0.01em;
-  line-height: 1.3;
+  font-family: var(--serif);
+  font-size: 1.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
 }
 
 .tagline {
   font-size: 0.82rem;
-  color: var(--muted);
+  color: var(--sumi-soft);
+  letter-spacing: 0.02em;
+}
+
+.header-aside {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .progress {
-  font-size: 0.88rem;
-  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: var(--sumi-faint);
+  letter-spacing: 0.06em;
   font-variant-numeric: tabular-nums;
 }
 
-/* 全体配置 */
+.progress-count {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  color: var(--sumi);
+  letter-spacing: 0.04em;
+}
+
+.progress-count b {
+  color: var(--shu-ink);
+  font-weight: 600;
+}
+
+/* 進捗の罫(全体に対する合格数) */
+.progress-bar {
+  width: 92px;
+  height: 2px;
+  background: var(--rule-strong);
+  overflow: hidden;
+}
+
+.progress-bar span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--shu);
+  transition: width 0.5s var(--ease);
+}
+
+/* ── 全体配置 ── */
 
 .layout {
   flex: 1;
   display: grid;
-  grid-template-columns: 200px minmax(0, 1fr);
-  gap: 18px;
+  grid-template-columns: 13rem minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 52px);
   align-items: start;
+  padding-top: 36px;
 }
+
+/* ── お題一覧 ── */
 
 .level-nav {
   position: sticky;
-  top: 16px;
+  top: 24px;
+}
+
+.level-nav-head {
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule);
 }
 
 .level-list {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
 .level-button {
   font: inherit;
-  font-size: 0.85rem;
+  font-size: 0.86rem;
   width: 100%;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  align-items: baseline;
+  gap: 10px;
   text-align: left;
-  color: var(--text);
+  color: var(--sumi-soft);
   background: none;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  padding: 6px 10px;
+  border: none;
+  border-left: 2px solid transparent;
+  padding: 9px 4px 9px 12px;
+  margin-left: -2px;
   cursor: pointer;
 }
 
+.level-index {
+  font-family: var(--serif);
+  font-size: 0.8rem;
+  color: var(--sumi-faint);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+  width: 1.2em;
+}
+
+.level-name {
+  flex: 1;
+}
+
 .level-button:hover {
-  background: var(--surface-2);
+  color: var(--sumi);
+}
+
+.level-button:hover .level-index {
+  color: var(--shu-ink);
 }
 
 .level-button[aria-current='true'] {
-  background: var(--surface);
-  border-color: var(--border);
-  box-shadow: var(--shadow);
+  color: var(--sumi);
+  border-left-color: var(--shu);
 }
 
+.level-button[aria-current='true'] .level-index {
+  color: var(--shu-ink);
+}
+
+.level-button[aria-current='true'] .level-name {
+  font-weight: 600;
+}
+
+/* 済の朱印 */
 .level-badge {
   flex: none;
-  font-size: 0.7rem;
-  color: var(--accent);
-  border: 1px solid var(--accent);
-  border-radius: 999px;
-  padding: 0 7px;
+  width: 18px;
+  height: 18px;
+  align-self: center;
+  color: var(--shu);
 }
+
+.level-button:not(.is-cleared) .level-badge {
+  visibility: hidden;
+}
+
+/* ── 稽古場(右カラム)── */
 
 .play {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 28px;
   min-width: 0;
 }
 
-/* お題 */
-
-.task h2 {
-  font-size: 1.05rem;
-  margin-bottom: 2px;
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
 }
 
-.task p {
-  font-size: 0.92rem;
+.section-key {
+  font-size: 0.75rem;
+  color: var(--sumi-faint);
+  letter-spacing: 0.03em;
+}
+
+.section-key kbd {
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  color: var(--sumi-soft);
+  letter-spacing: 0;
+}
+
+/* ── お題 ── */
+
+.task-kicker {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.task h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+.task-goal {
+  font-size: 0.96rem;
+  color: var(--sumi-soft);
+  max-width: 46rem;
 }
 
 .hint {
-  margin-top: 6px;
+  margin-top: 16px;
   font-size: 0.88rem;
+  max-width: 46rem;
 }
 
 .hint summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   cursor: pointer;
-  color: var(--muted);
+  color: var(--sumi-faint);
   width: fit-content;
+  list-style: none;
+  transition: color 0.18s var(--ease);
 }
 
+.hint summary::-webkit-details-marker {
+  display: none;
+}
+
+.hint summary::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.2s var(--ease);
+}
+
+.hint[open] summary::before {
+  transform: rotate(45deg);
+}
+
+.hint summary:hover,
 .hint[open] summary {
-  color: var(--accent);
+  color: var(--shu-ink);
 }
 
-.hint p {
-  margin-top: 4px;
-  padding: 10px 14px;
-  background: var(--accent-soft);
-  border-radius: 10px;
+.hint-body {
+  margin-top: 10px;
+  padding-left: 16px;
+  border-left: 2px solid var(--shu);
+  color: var(--sumi-soft);
 }
 
-/* 庭 */
+/* ── 庭 ── */
 
 .arena-wrap {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
 }
 
 .arena {
   position: relative;
-  height: 380px;
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  height: 384px;
+  border: 1px solid var(--rule-strong);
   overflow: hidden;
-  box-shadow: var(--shadow);
   background:
-    repeating-linear-gradient(0deg, transparent 0 11px, var(--sand-line) 11px 12px), var(--sand);
+    repeating-linear-gradient(0deg, transparent 0 11px, var(--sand-line) 11px 12px),
+    var(--sand);
 }
 
 .arena-note {
   font-size: 0.78rem;
-  color: var(--muted);
+  color: var(--sumi-faint);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.arena-note::before {
+  content: '';
+  width: 22px;
+  height: 0;
+  border-top: 2px dashed var(--ghost);
+  flex: none;
 }
 
 .stage {
   position: absolute;
   inset: 0;
-  padding: 20px;
+  padding: 22px;
   pointer-events: none;
 }
 
@@ -266,10 +497,11 @@ a {
 .ishi {
   width: 56px;
   height: 56px;
-  border-radius: 18px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
-  font-size: 1.05rem;
+  font-family: var(--serif);
+  font-size: 1.15rem;
   font-weight: 600;
 }
 
@@ -279,173 +511,178 @@ a {
 }
 
 .stage--answer .ishi {
-  background: var(--ink);
-  color: var(--ink-text);
-  box-shadow: 0 2px 6px rgb(0 0 0 / 0.18);
+  background: var(--stone);
+  color: var(--stone-text);
+  box-shadow: 0 1px 1px rgb(30 24 14 / 0.18);
 }
 
+/* 一致した石は朱の囲みで印す(outlineは矩形に影響しない) */
 .stage--answer .ishi.fit {
-  outline: 3px solid var(--accent);
-  outline-offset: -3px;
+  outline: 2.5px solid var(--shu);
+  outline-offset: 2px;
 }
 
-/* 回答 */
+/* ── 回答(硯)── */
 
 .answer {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.answer-label {
-  font-size: 0.82rem;
-  color: var(--muted);
+  gap: 14px;
 }
 
 .css-input {
-  font-family: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
   font-size: 0.88rem;
-  line-height: 1.7;
-  color: var(--editor-text);
-  background: var(--editor-bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 16px;
-  min-height: 190px;
+  line-height: 1.75;
+  color: var(--suzuri-text);
+  background: var(--suzuri);
+  border: 1px solid var(--rule-strong);
+  border-radius: 6px;
+  padding: 16px 18px;
+  min-height: 196px;
   resize: vertical;
   tab-size: 2;
+  caret-color: var(--shu);
+}
+
+.css-input:focus-visible {
+  outline: 2px solid var(--shu);
+  outline-offset: 2px;
 }
 
 .answer-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .button {
   font: inherit;
-  font-size: 0.85rem;
-  color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 7px 16px;
+  font-size: 0.86rem;
+  letter-spacing: 0.02em;
+  color: var(--sumi);
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  border-radius: 6px;
+  padding: 9px 18px;
   cursor: pointer;
 }
 
 .button:hover {
-  background: var(--surface-2);
+  border-color: var(--sumi-faint);
 }
 
 .button-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #ffffff;
+  background: var(--shu);
+  border-color: var(--shu);
+  color: #fff;
+  font-weight: 600;
 }
 
 .button-primary:hover {
-  background: var(--accent);
-  filter: brightness(1.08);
+  border-color: var(--shu);
+  filter: brightness(1.06);
 }
 
 .answer-meta {
   margin-left: auto;
-  font-size: 0.85rem;
-  color: var(--muted);
+  font-size: 0.86rem;
+  color: var(--sumi-soft);
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
 }
 
 .issues {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-}
-
-.issues li {
-  font-size: 0.82rem;
-  color: var(--error);
+  gap: 5px;
 }
 
 .issues:empty {
   display: none;
 }
 
+.issues li {
+  font-size: 0.82rem;
+  color: var(--shu-ink);
+  padding-left: 16px;
+  position: relative;
+}
+
+.issues li::before {
+  content: '×';
+  position: absolute;
+  left: 0;
+  color: var(--shu);
+}
+
+/* 合格 */
 .verdict {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
   flex-wrap: wrap;
-  background: var(--accent-soft);
-  border: 1px solid var(--accent);
-  border-radius: 12px;
-  padding: 12px 16px;
+  padding: 16px 4px 4px;
+  border-top: 1px solid var(--shu);
+}
+
+.verdict[hidden] {
+  display: none;
+}
+
+.verdict-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.verdict-seal {
+  width: 24px;
+  height: 24px;
+  color: var(--shu);
+  flex: none;
 }
 
 .verdict p {
-  font-size: 0.92rem;
-  color: var(--accent);
+  font-family: var(--serif);
+  font-size: 1rem;
+  color: var(--shu-ink);
   font-weight: 600;
 }
 
-/* フッター */
+/* ── フッター ── */
 
 .app-footer {
+  margin-top: 48px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule);
   font-size: 0.78rem;
-  color: var(--muted);
-  text-align: center;
+  color: var(--sumi-faint);
+  line-height: 1.9;
 }
 
-/* フォーカス */
+.app-footer a {
+  color: var(--sumi-soft);
+  text-underline-offset: 3px;
+  text-decoration-color: var(--rule-strong);
+}
+
+.app-footer a:hover {
+  color: var(--shu-ink);
+  text-decoration-color: var(--shu);
+}
+
+/* ── フォーカス ── */
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--shu);
   outline-offset: 2px;
+  border-radius: 2px;
 }
 
-/* モーション */
-
-@media (prefers-reduced-motion: no-preference) {
-  .app-header,
-  .layout,
-  .app-footer {
-    animation: rise 480ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
-  }
-
-  .layout {
-    animation-delay: 80ms;
-  }
-
-  .app-footer {
-    animation-delay: 160ms;
-  }
-
-  .button,
-  .level-button {
-    transition:
-      background 160ms ease,
-      border-color 160ms ease,
-      transform 160ms ease,
-      filter 160ms ease;
-  }
-
-  .button:hover {
-    transform: translateY(-1px);
-  }
-
-  .stage--answer .ishi {
-    transition: outline-color 200ms ease;
-  }
-
-  .verdict {
-    animation: pop-in 320ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  }
-
-  .hint p {
-    animation: rise 240ms ease both;
-  }
-}
+/* ── モーション(控えめ・意味のある範囲)── */
 
 @keyframes rise {
   from {
@@ -454,26 +691,59 @@ a {
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
   }
 }
 
-@keyframes pop-in {
-  from {
-    opacity: 0;
-    transform: scale(0.96);
+@media (prefers-reduced-motion: no-preference) {
+  .app-header,
+  .level-nav,
+  .play,
+  .app-footer {
+    animation: rise 0.55s var(--ease) both;
   }
-  to {
-    opacity: 1;
-    transform: scale(1);
+
+  .level-nav {
+    animation-delay: 0.06s;
+  }
+
+  .play {
+    animation-delay: 0.12s;
+  }
+
+  .app-footer {
+    animation-delay: 0.18s;
+  }
+
+  .button,
+  .level-button,
+  .hint summary,
+  .app-footer a {
+    transition:
+      color 0.18s var(--ease),
+      border-color 0.18s var(--ease),
+      filter 0.18s var(--ease);
+  }
+
+  .stage--answer .ishi {
+    transition: outline-color 0.2s var(--ease);
+  }
+
+  .verdict {
+    animation: rise 0.4s var(--ease) both;
+  }
+
+  .hint-body {
+    animation: rise 0.28s var(--ease) both;
   }
 }
 
-/* 狭い画面 */
+/* ── 狭い画面 ── */
 
-@media (max-width: 820px) {
+@media (max-width: 860px) {
   .layout {
     grid-template-columns: minmax(0, 1fr);
+    padding-top: 28px;
   }
 
   .level-nav {
@@ -481,15 +751,25 @@ a {
   }
 
   .level-list {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
-  .level-button {
-    width: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 16px;
   }
 
   .arena {
     height: 320px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
