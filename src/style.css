@@ -335,6 +335,11 @@ body {
   flex: 1;
 }
 
+.level-button:hover .level-name,
+.level-button[aria-current='true'] .level-name {
+  transform: translateX(2px);
+}
+
 .level-button:hover {
   color: var(--sumi);
 }
@@ -694,15 +699,20 @@ body {
   max-width: 52rem;
 }
 
+/* 下線は即時の線ではなく、ホバーで引かれる表現にする */
 .app-footer a {
   color: var(--sumi-soft);
-  text-underline-offset: 3px;
-  text-decoration-color: var(--rule-strong);
+  text-decoration: none;
+  background-image: linear-gradient(var(--shu), var(--shu));
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
 }
 
-.app-footer a:hover {
+.app-footer a:hover,
+.app-footer a:focus-visible {
   color: var(--shu-ink);
-  text-decoration-color: var(--shu);
+  background-size: 100% 1px;
 }
 
 /* ── フォーカス ── */
@@ -726,15 +736,27 @@ body {
   }
 }
 
+/* 朱印を押す。大きめから等倍へ沈め、跳ねさせない。 */
+@keyframes stamp {
+  from {
+    opacity: 0;
+    transform: scale(1.45);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .app-header,
-  .level-nav,
+  .level-nav-head,
   .play,
   .app-footer {
     animation: rise 0.55s var(--ease) both;
   }
 
-  .level-nav {
+  .level-nav-head {
     animation-delay: 0.06s;
   }
 
@@ -746,6 +768,12 @@ body {
     animation-delay: 0.18s;
   }
 
+  /* お題一覧はスタッガで一枚ずつ入場(初回マウント時のみ)。 */
+  .level-list li {
+    animation: rise 0.5s var(--ease) both;
+    animation-delay: calc(var(--i, 0) * 26ms + 0.12s);
+  }
+
   .button,
   .level-button,
   .hint summary,
@@ -753,7 +781,17 @@ body {
     transition:
       color 0.18s var(--ease),
       border-color 0.18s var(--ease),
+      background-size 0.3s var(--ease),
+      transform 0.12s var(--ease),
       filter 0.18s var(--ease);
+  }
+
+  .level-name {
+    transition: transform 0.18s var(--ease);
+  }
+
+  .button:active {
+    transform: translateY(1px);
   }
 
   .stage--answer .ishi {
@@ -762,6 +800,10 @@ body {
 
   .verdict {
     animation: rise 0.4s var(--ease) both;
+  }
+
+  .verdict-seal {
+    animation: stamp 0.34s var(--ease) both;
   }
 
   .hint-body {
