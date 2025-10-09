@@ -148,21 +148,20 @@ function markCleared(id: string): void {
   store.setItem(CLEARED_KEY, JSON.stringify([...ids]));
 }
 
-function renderLevelList(): void {
-  const ids = clearedIds();
+// 一覧は一度だけ組み、以降は状態だけ差し替える。毎回作り直すとフォーカスが飛び、
+// 入場アニメーションも適用のたびに再生されてしまう。
+const levelButtons: HTMLButtonElement[] = [];
+
+function buildLevelList(): void {
   levelListEl.replaceChildren();
+  levelButtons.length = 0;
   levels.forEach((level, index) => {
     const item = document.createElement('li');
+    item.style.setProperty('--i', String(index));
+
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'level-button';
-    const cleared = ids.has(level.id);
-    if (cleared) button.classList.add('is-cleared');
-    button.setAttribute('aria-current', String(index === current));
-    button.setAttribute(
-      'aria-label',
-      `第${index + 1}問 ${level.title}${cleared ? '(クリア済み)' : ''}`,
-    );
 
     const idx = document.createElement('span');
     idx.className = 'level-index';
@@ -178,6 +177,21 @@ function renderLevelList(): void {
     });
     item.append(button);
     levelListEl.append(item);
+    levelButtons.push(button);
+  });
+}
+
+function updateLevelList(): void {
+  const ids = clearedIds();
+  levelButtons.forEach((button, index) => {
+    const level = levels[index] as Level;
+    const cleared = ids.has(level.id);
+    button.classList.toggle('is-cleared', cleared);
+    button.setAttribute('aria-current', String(index === current));
+    button.setAttribute(
+      'aria-label',
+      `第${index + 1}問 ${level.title}${cleared ? '(クリア済み)' : ''}`,
+    );
   });
 
   const cleared = ids.size;
@@ -209,7 +223,7 @@ function applyAnswer(level: Level, animate: boolean): void {
   verdictEl.hidden = !result.pass;
   if (result.pass) {
     markCleared(level.id);
-    renderLevelList();
+    updateLevelList();
   }
 
   if (animate) answer.animateFrom(before);
@@ -234,7 +248,7 @@ function selectLevel(index: number): void {
   ghost.applyRules(compile(level.targetCss, level.allowedSelectors).rules);
   editor.value = store.getItem(CODE_KEY(level.id)) ?? level.starter;
   applyAnswer(level, false);
-  renderLevelList();
+  updateLevelList();
 }
 
 document.getElementById('apply-button')?.addEventListener('click', () => {
@@ -286,5 +300,6 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
+buildLevelList();
 const fromHash = Number.parseInt(location.hash.slice(1), 10);
 selectLevel(Number.isInteger(fromHash) && fromHash >= 1 ? fromHash - 1 : 0);
