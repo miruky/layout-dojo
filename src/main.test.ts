@@ -44,4 +44,23 @@ describe('main', () => {
     expect(editor.value).toBe(levels[5]?.starter);
     expect(document.querySelectorAll('#issues li').length).toBe(0);
   });
+
+  it('[ ] キーで前後のお題に移動できる', () => {
+    (document.querySelectorAll<HTMLButtonElement>('.level-button')[0])?.click();
+    expect(location.hash).toBe('#1');
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: ']', bubbles: true }));
+    expect(location.hash).toBe('#2');
+    expect(document.getElementById('task-title')?.textContent).toContain(levels[1]?.title);
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: '[', bubbles: true }));
+    expect(location.hash).toBe('#1');
+  });
+
+  it('エディタ入力中は [ ] でお題が移動しない', () => {
+    const editor = document.querySelector('.css-input') as HTMLTextAreaElement;
+    expect(location.hash).toBe('#1');
+    editor.dispatchEvent(new KeyboardEvent('keydown', { key: ']', bubbles: true }));
+    expect(location.hash).toBe('#1');
+  });
 });

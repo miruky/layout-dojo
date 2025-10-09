@@ -37,7 +37,16 @@
   --sans: 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif;
   --mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
 
+  /* 型(モジュラースケール)。見出しは大きく字間を締め、本文は読みやすく。 */
+  --text-xs: 0.78rem;
+  --text-sm: 0.86rem;
+  --text-base: 0.95rem;
+  --text-lg: 1.12rem;
+  --title: clamp(1.4rem, 2.6vw, 1.72rem);
+  --display: clamp(1.6rem, 3vw, 1.8rem);
+
   --shell: 70rem;
+  --measure: 44rem;
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
@@ -192,14 +201,14 @@ body {
 
 .brand-text h1 {
   font-family: var(--serif);
-  font-size: 1.7rem;
+  font-size: var(--display);
   font-weight: 600;
-  letter-spacing: 0.04em;
-  line-height: 1.1;
+  letter-spacing: 0.05em;
+  line-height: 1.04;
 }
 
 .tagline {
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
   color: var(--sumi-soft);
   letter-spacing: 0.02em;
 }
@@ -255,9 +264,9 @@ body {
   flex: 1;
   display: grid;
   grid-template-columns: 13rem minmax(0, 1fr);
-  gap: clamp(24px, 4vw, 52px);
+  gap: clamp(24px, 4vw, 56px);
   align-items: start;
-  padding-top: 36px;
+  padding-top: 40px;
 }
 
 /* ── お題一覧 ── */
@@ -268,9 +277,26 @@ body {
 }
 
 .level-nav-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
   margin-bottom: 14px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--rule);
+}
+
+.nav-hint {
+  font-size: var(--text-xs);
+  color: var(--sumi-faint);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.nav-hint kbd {
+  font-family: var(--mono);
+  font-size: var(--text-xs);
+  color: var(--sumi-soft);
 }
 
 .level-list {
@@ -281,7 +307,7 @@ body {
 
 .level-button {
   font: inherit;
-  font-size: 0.86rem;
+  font-size: var(--text-sm);
   width: 100%;
   display: flex;
   align-items: baseline;
@@ -348,7 +374,7 @@ body {
 .play {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 32px;
   min-width: 0;
 }
 
@@ -384,23 +410,24 @@ body {
 
 .task h2 {
   font-family: var(--serif);
-  font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+  font-size: var(--title);
   font-weight: 600;
-  letter-spacing: 0.02em;
-  line-height: 1.3;
-  margin-bottom: 8px;
+  letter-spacing: 0.025em;
+  line-height: 1.22;
+  margin-bottom: 10px;
 }
 
 .task-goal {
-  font-size: 0.96rem;
+  font-size: var(--text-base);
+  line-height: 1.85;
   color: var(--sumi-soft);
-  max-width: 46rem;
+  max-width: var(--measure);
 }
 
 .hint {
-  margin-top: 16px;
-  font-size: 0.88rem;
-  max-width: 46rem;
+  margin-top: 18px;
+  font-size: var(--text-sm);
+  max-width: var(--measure);
 }
 
 .hint summary {
@@ -463,7 +490,7 @@ body {
 }
 
 .arena-note {
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   color: var(--sumi-faint);
   display: flex;
   align-items: center;
@@ -558,7 +585,7 @@ body {
 
 .button {
   font: inherit;
-  font-size: 0.86rem;
+  font-size: var(--text-sm);
   letter-spacing: 0.02em;
   color: var(--sumi);
   background: transparent;
@@ -586,7 +613,7 @@ body {
 
 .answer-meta {
   margin-left: auto;
-  font-size: 0.86rem;
+  font-size: var(--text-sm);
   color: var(--sumi-soft);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.04em;
@@ -655,12 +682,16 @@ body {
 /* ── フッター ── */
 
 .app-footer {
-  margin-top: 48px;
-  padding-top: 22px;
+  margin-top: 56px;
+  padding-top: 24px;
   border-top: 1px solid var(--rule);
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   color: var(--sumi-faint);
-  line-height: 1.9;
+  line-height: 1.95;
+}
+
+.app-footer p {
+  max-width: 52rem;
 }
 
 .app-footer a {
