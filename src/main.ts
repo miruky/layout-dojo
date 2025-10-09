@@ -4,13 +4,32 @@
 
 import './style.css';
 import { compile } from './lib/csstext';
-import { judge } from './lib/judge';
+import { describeDiff, judge, type Judgement } from './lib/judge';
 import { levelByIndex, levels, type Level } from './lib/levels';
 import { store } from './lib/storage';
-import { Stage } from './ui/stage';
+import { applyTheme, loadTheme, nextTheme, THEME_LABEL, type ThemeMode } from './lib/theme';
+import { NUMERALS, Stage } from './ui/stage';
 
 const CLEARED_KEY = 'layout-dojo:cleared';
 const CODE_KEY = (id: string) => `layout-dojo:code:${id}`;
+
+// 配色を読み出し、DOM構築前に反映してちらつきを抑える。
+let themeMode: ThemeMode = loadTheme();
+applyTheme(themeMode);
+
+const THEME_ICON: Record<ThemeMode, string> = {
+  light: `<svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6" />
+    <path d="M12 3.5v2.2M12 18.3v2.2M4.6 12H6.8M17.2 12h2.2M6.4 6.4l1.6 1.6M16 16l1.6 1.6M17.6 6.4 16 8M8 16l-1.6 1.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+  </svg>`,
+  dark: `<svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M20 14.6A8 8 0 1 1 9.4 4a6.5 6.5 0 0 0 10.6 10.6Z" fill="currentColor" />
+  </svg>`,
+  auto: `<svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6" />
+    <path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor" />
+  </svg>`,
+};
 
 // 庭に石を据えた紋。格子の中の朱い石が主役。
 const BRAND_MARK = `
@@ -55,6 +74,7 @@ app.innerHTML = `
           <span class="progress-count" id="progress-count"></span>
           <span class="progress-bar" aria-hidden="true"><span id="progress-fill"></span></span>
         </p>
+        <button type="button" class="theme-toggle" id="theme-toggle"></button>
       </div>
     </header>
     <div class="layout">
@@ -94,6 +114,7 @@ app.innerHTML = `
             <span class="answer-meta" id="match-count" aria-live="polite"></span>
           </div>
           <ul class="issues" id="issues"></ul>
+          <ul class="diffs" id="diffs" aria-live="polite"></ul>
           <div class="verdict" id="verdict" hidden>
             <div class="verdict-text">
               ${SEAL_SOLID}
@@ -118,6 +139,7 @@ const ghost = new Stage(arena, 'ghost');
 const answer = new Stage(arena, 'answer');
 const editor = document.getElementById('css-input') as HTMLTextAreaElement;
 const issuesEl = document.getElementById('issues') as HTMLUListElement;
+const diffsEl = document.getElementById('diffs') as HTMLUListElement;
 const verdictEl = document.getElementById('verdict') as HTMLElement;
 const matchCountEl = document.getElementById('match-count') as HTMLElement;
 const progressCountEl = document.getElementById('progress-count') as HTMLElement;
@@ -127,8 +149,24 @@ const taskTitleEl = document.getElementById('task-title') as HTMLElement;
 const taskGoalEl = document.getElementById('task-goal') as HTMLElement;
 const taskHintEl = document.getElementById('task-hint') as HTMLElement;
 const levelListEl = document.getElementById('level-list') as HTMLOListElement;
+const themeToggle = document.getElementById('theme-toggle') as HTMLButtonElement;
 
 let current = 0;
+
+function renderTheme(): void {
+  themeToggle.innerHTML = THEME_ICON[themeMode];
+  themeToggle.setAttribute(
+    'aria-label',
+    `配色: ${THEME_LABEL[themeMode]}。押すと${THEME_LABEL[nextTheme(themeMode)]}へ`,
+  );
+  themeToggle.title = `配色: ${THEME_LABEL[themeMode]}`;
+}
+
+themeToggle.addEventListener('click', () => {
+  themeMode = nextTheme(themeMode);
+  applyTheme(themeMode);
+  renderTheme();
+});
 
 function clearedIds(): Set<string> {
   try {
@@ -209,6 +247,32 @@ function showIssues(issues: { reason: string }[]): void {
   }
 }
 
+// ずれている石を、進むべき向きで案内する。CSSにエラーがある間は出さず、
+// 多すぎるときは先頭だけ見せて残りは件数で畳む。
+const MAX_DIFFS = 4;
+
+function showDiffs(result: Judgement, clean: boolean): void {
+  diffsEl.replaceChildren();
+  if (!clean || result.pass || result.total === 0 || result.stones.length === 0) return;
+
+  const off = result.stones.filter((stone) => !stone.match);
+  for (const stone of off.slice(0, MAX_DIFFS)) {
+    const text = describeDiff(stone);
+    if (!text) continue;
+    const item = document.createElement('li');
+    const name = document.createElement('b');
+    name.textContent = `${NUMERALS[stone.index] ?? stone.index + 1}の石`;
+    item.append(name, document.createTextNode(` ${text}`));
+    diffsEl.append(item);
+  }
+  if (off.length > MAX_DIFFS) {
+    const more = document.createElement('li');
+    more.className = 'diffs-more';
+    more.textContent = `ほか ${off.length - MAX_DIFFS} 個ずれています`;
+    diffsEl.append(more);
+  }
+}
+
 function applyAnswer(level: Level, animate: boolean): void {
   const before = animate ? answer.rects() : [];
   const compiled = compile(editor.value, level.allowedSelectors);
@@ -220,6 +284,7 @@ function applyAnswer(level: Level, animate: boolean): void {
   const result = judge(ghost.rects(), answer.rects());
   answer.setFit(result.stones.map((stone) => stone.match));
   matchCountEl.textContent = `石 ${result.matched} / ${result.total}`;
+  showDiffs(result, compiled.issues.length === 0);
   verdictEl.hidden = !result.pass;
   if (result.pass) {
     markCleared(level.id);
@@ -300,6 +365,7 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
+renderTheme();
 buildLevelList();
 const fromHash = Number.parseInt(location.hash.slice(1), 10);
 selectLevel(Number.isInteger(fromHash) && fromHash >= 1 ? fromHash - 1 : 0);
