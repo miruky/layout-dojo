@@ -63,4 +63,16 @@ describe('main', () => {
     editor.dispatchEvent(new KeyboardEvent('keydown', { key: ']', bubbles: true }));
     expect(location.hash).toBe('#1');
   });
+
+  it('テーマ切替ボタンで自動→ライト→ダークと巡回する', () => {
+    const toggle = document.getElementById('theme-toggle') as HTMLButtonElement;
+    const root = document.documentElement;
+    expect(root.hasAttribute('data-theme')).toBe(false);
+    toggle.click();
+    expect(root.getAttribute('data-theme')).toBe('light');
+    toggle.click();
+    expect(root.getAttribute('data-theme')).toBe('dark');
+    toggle.click();
+    expect(root.hasAttribute('data-theme')).toBe(false);
+  });
 });
