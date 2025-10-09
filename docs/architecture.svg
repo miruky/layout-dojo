@@ -1,23 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-labelledby="arch-title">
   <title id="arch-title">layout-dojo の構成図。エディタの回答CSSとお題の正解CSSが同じcompileを通り、回答ステージとお手本ステージに適用される。両者の石の実測矩形をjudgeが突き合わせ、合否と進捗を画面とlocalStorageに反映する。</title>
   <style>
-    .name { font: 600 14px 'Hiragino Sans', 'Noto Sans JP', sans-serif; fill: #26272b; }
-    .file { font: 11px ui-monospace, 'SF Mono', Menlo, monospace; fill: #6e6f76; }
-    .desc { font: 11px 'Hiragino Sans', 'Noto Sans JP', sans-serif; fill: #6e6f76; }
-    .label { font: 11px 'Hiragino Sans', 'Noto Sans JP', sans-serif; fill: #6e6f76; }
-    .caption { font: 12px 'Hiragino Sans', 'Noto Sans JP', sans-serif; fill: #6e6f76; }
-    .heading { font: 700 16px 'Hiragino Sans', 'Noto Sans JP', sans-serif; fill: #26272b; }
-    .box { fill: #fdfcf9; stroke: #ddd8cc; stroke-width: 1.2; }
-    .box-state { fill: #e7ecfd; stroke: #4263eb; }
-    .flow { stroke: #9aa0aa; fill: none; stroke-width: 1.6; }
-    .arrow { fill: #9aa0aa; }
+    .name { font: 600 14px 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif; fill: #211f1a; }
+    .file { font: 11px ui-monospace, 'SF Mono', Menlo, monospace; fill: #948f84; }
+    .desc { font: 11px 'Hiragino Sans', 'Noto Sans JP', sans-serif; fill: #635f56; }
+    .label { font: 11px 'Hiragino Sans', 'Noto Sans JP', sans-serif; fill: #948f84; }
+    .caption { font: 12px 'Hiragino Sans', 'Noto Sans JP', sans-serif; fill: #635f56; }
+    .heading { font: 600 16px 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif; fill: #211f1a; letter-spacing: 0.04em; }
+    .box { fill: #faf7ef; stroke: #d2c9b5; stroke-width: 1.2; }
+    .box-state { fill: #f1e1d9; stroke: #b8472e; }
+    .flow { stroke: #b1a78f; fill: none; stroke-width: 1.6; }
+    .arrow { fill: #b1a78f; }
     @media (prefers-color-scheme: dark) {
-      .name, .heading { fill: #e7e8ea; }
-      .file, .desc, .label, .caption { fill: #9a9ea8; }
-      .box { fill: #1b1d23; stroke: #3a3e46; }
-      .box-state { fill: #232c4d; stroke: #748ffc; }
-      .flow { stroke: #6a707c; }
-      .arrow { fill: #6a707c; }
+      .name, .heading { fill: #e9e4d6; }
+      .file, .label { fill: #7d786b; }
+      .desc, .caption { fill: #a8a294; }
+      .box { fill: #1c1a14; stroke: #393528; }
+      .box-state { fill: #2c1a14; stroke: #de6a4b; }
+      .flow { stroke: #5b5648; }
+      .arrow { fill: #5b5648; }
     }
   </style>
   <defs>
@@ -28,39 +29,39 @@
 
   <text x="16" y="34" class="heading">layout-dojo の構成</text>
 
-  <rect x="16" y="56" width="170" height="72" rx="10" class="box"/>
+  <rect x="16" y="56" width="170" height="72" rx="8" class="box"/>
   <text x="101" y="84" text-anchor="middle" class="name">エディタ</text>
   <text x="101" y="102" text-anchor="middle" class="desc">回答CSSを書く</text>
 
-  <rect x="246" y="56" width="190" height="72" rx="10" class="box"/>
+  <rect x="246" y="56" width="190" height="72" rx="8" class="box"/>
   <text x="341" y="80" text-anchor="middle" class="name">compile</text>
   <text x="341" y="98" text-anchor="middle" class="file">src/lib/csstext.ts</text>
   <text x="341" y="116" text-anchor="middle" class="desc">解釈と許可リスト検査</text>
 
-  <rect x="506" y="56" width="170" height="72" rx="10" class="box"/>
+  <rect x="506" y="56" width="170" height="72" rx="8" class="box"/>
   <text x="591" y="80" text-anchor="middle" class="name">Stage(回答)</text>
   <text x="591" y="98" text-anchor="middle" class="file">src/ui/stage.ts</text>
   <text x="591" y="116" text-anchor="middle" class="desc">スコープ付きで適用</text>
 
-  <rect x="736" y="56" width="200" height="72" rx="10" class="box"/>
+  <rect x="736" y="56" width="200" height="72" rx="8" class="box"/>
   <text x="836" y="80" text-anchor="middle" class="name">judge</text>
   <text x="836" y="98" text-anchor="middle" class="file">src/lib/judge.ts</text>
   <text x="836" y="116" text-anchor="middle" class="desc">実測矩形の突き合わせ</text>
 
-  <rect x="16" y="190" width="170" height="72" rx="10" class="box"/>
+  <rect x="16" y="190" width="170" height="72" rx="8" class="box"/>
   <text x="101" y="214" text-anchor="middle" class="name">levels</text>
   <text x="101" y="232" text-anchor="middle" class="file">src/lib/levels.ts</text>
   <text x="101" y="250" text-anchor="middle" class="desc">お題と正解CSS</text>
 
-  <rect x="506" y="190" width="170" height="72" rx="10" class="box"/>
+  <rect x="506" y="190" width="170" height="72" rx="8" class="box"/>
   <text x="591" y="214" text-anchor="middle" class="name">Stage(お手本)</text>
   <text x="591" y="232" text-anchor="middle" class="file">src/ui/stage.ts</text>
   <text x="591" y="250" text-anchor="middle" class="desc">薄い石で正解を示す</text>
 
-  <rect x="736" y="190" width="200" height="72" rx="10" class="box box-state"/>
+  <rect x="736" y="190" width="200" height="72" rx="8" class="box box-state"/>
   <text x="836" y="214" text-anchor="middle" class="name">合否と進捗</text>
   <text x="836" y="232" text-anchor="middle" class="file">src/main.ts + storage.ts</text>
-  <text x="836" y="250" text-anchor="middle" class="desc">一致表示・済バッジ・保存</text>
+  <text x="836" y="250" text-anchor="middle" class="desc">一致表示・済印・保存</text>
 
   <path d="M 186 92 H 240" class="flow" marker-end="url(#arrow)"/>
   <path d="M 436 92 H 500" class="flow" marker-end="url(#arrow)"/>
