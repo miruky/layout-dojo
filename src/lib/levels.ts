@@ -210,6 +210,28 @@ export const levels: Level[] = [
     ].join('\n'),
     allowedSelectors: ['.niwa', '.ishi-1', '.ishi-2', '.ishi-3', '.ishi-4'],
   },
+  {
+    id: 'tate-masu',
+    title: '升目を縦に流す',
+    goal: '3段の升目に6つの石を、左の列から下へ下へと埋めていく(縦方向に流す)。',
+    hint: 'grid-auto-flow: column にすると、石は行ではなく列の方向(上から下)へ先に詰まる。段数は grid-template-rows で決める。',
+    stones: 6,
+    targetCss:
+      '.niwa { display: grid; grid-template-rows: repeat(3, 1fr); grid-auto-flow: column; }',
+    starter: '.niwa {\n  display: grid;\n  grid-template-rows: repeat(3, 1fr);\n}\n',
+    allowedSelectors: ['.niwa'],
+  },
+  {
+    id: 'masu-yose',
+    title: '升目を中央へ',
+    goal: '幅56pxの升目を3列だけ作り、その列のかたまりを庭の左右中央へ寄せる。',
+    hint: 'トラックを固定幅(56px)にすると庭に余白が生まれる。grid では justify-content が列のかたまりの寄せ方を決める。',
+    stones: 6,
+    targetCss:
+      '.niwa { display: grid; grid-template-columns: repeat(3, 56px); justify-content: center; }',
+    starter: '.niwa {\n  display: grid;\n  grid-template-columns: repeat(3, 56px);\n}\n',
+    allowedSelectors: ['.niwa'],
+  },
 ];
 
 export function levelByIndex(index: number): Level | undefined {
