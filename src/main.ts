@@ -60,6 +60,7 @@ if (!app) throw new Error('#app が見つかりません');
 
 app.innerHTML = `
   <div class="app">
+    <a class="skip-link" href="#play">本文へスキップ</a>
     <header class="app-header">
       <div class="brand">
         ${BRAND_MARK}
@@ -85,7 +86,11 @@ app.innerHTML = `
         </div>
         <ol class="level-list" id="level-list"></ol>
       </nav>
-      <main class="play">
+      <main class="play" id="play" tabindex="-1">
+        <div class="all-clear" id="all-clear" hidden aria-live="polite">
+          ${SEAL_SOLID}
+          <p>皆伝。全${levels.length}問を通しました。</p>
+        </div>
         <section class="task" aria-labelledby="task-title">
           <span class="kicker task-kicker" id="task-kicker"></span>
           <h2 id="task-title"></h2>
@@ -144,6 +149,7 @@ const verdictEl = document.getElementById('verdict') as HTMLElement;
 const matchCountEl = document.getElementById('match-count') as HTMLElement;
 const progressCountEl = document.getElementById('progress-count') as HTMLElement;
 const progressFillEl = document.getElementById('progress-fill') as HTMLElement;
+const allClearEl = document.getElementById('all-clear') as HTMLElement;
 const taskKickerEl = document.getElementById('task-kicker') as HTMLElement;
 const taskTitleEl = document.getElementById('task-title') as HTMLElement;
 const taskGoalEl = document.getElementById('task-goal') as HTMLElement;
@@ -236,6 +242,7 @@ function updateLevelList(): void {
   const total = levels.length;
   progressCountEl.innerHTML = `<b>${cleared}</b> / ${total}`;
   progressFillEl.style.width = `${total === 0 ? 0 : (cleared / total) * 100}%`;
+  allClearEl.hidden = !(total > 0 && cleared === total);
 }
 
 function showIssues(issues: { reason: string }[]): void {

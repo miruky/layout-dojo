@@ -12,7 +12,7 @@
   --surface: #faf7ef;
   --sumi: #211f1a;
   --sumi-soft: #635f56;
-  --sumi-faint: #948f84;
+  --sumi-faint: #6e6859;
   --rule: #e4ddcd;
   --rule-strong: #d2c9b5;
 
@@ -32,6 +32,7 @@
   --shu: #b8472e;
   --shu-ink: #99381f; /* 地に乗せる文字用(AA確保) */
   --shu-wash: #f1e1d9;
+  --shu-btn: #b8472e; /* 白文字を乗せる塗りボタン用(両テーマでAA) */
 
   --serif: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif;
   --sans: 'Hiragino Sans', 'Noto Sans JP', system-ui, sans-serif;
@@ -56,7 +57,7 @@
   --surface: #1c1a14;
   --sumi: #e9e4d6;
   --sumi-soft: #a8a294;
-  --sumi-faint: #7d786b;
+  --sumi-faint: #8a8474;
   --rule: #2a2820;
   --rule-strong: #393528;
 
@@ -73,6 +74,7 @@
   --shu: #de6a4b;
   --shu-ink: #e8927a;
   --shu-wash: #2c1a14;
+  --shu-btn: #c0492e;
 }
 
 /* システム追従(手動でlightを選んでいないとき) */
@@ -82,7 +84,7 @@
     --surface: #1c1a14;
     --sumi: #e9e4d6;
     --sumi-soft: #a8a294;
-    --sumi-faint: #7d786b;
+    --sumi-faint: #8a8474;
     --rule: #2a2820;
     --rule-strong: #393528;
 
@@ -99,6 +101,7 @@
     --shu: #de6a4b;
     --shu-ink: #e8927a;
     --shu-wash: #2c1a14;
+    --shu-btn: #c0492e;
   }
 }
 
@@ -130,6 +133,24 @@ body {
   white-space: nowrap;
 }
 
+/* 本文へ飛ぶリンク。フォーカス時だけ現れる。 */
+.skip-link {
+  position: fixed;
+  top: -64px;
+  left: 16px;
+  z-index: 50;
+  background: var(--shu-btn);
+  color: #fff;
+  padding: 9px 16px;
+  border-radius: 0 0 6px 6px;
+  font-size: var(--text-sm);
+  transition: top 0.2s var(--ease);
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 /* 小見出し(キッカー)。字間を広げた小さなラテン字で階層の頂を作る。 */
 .kicker {
   font-size: 11px;
@@ -137,6 +158,28 @@ body {
   text-transform: uppercase;
   color: var(--shu-ink);
   font-weight: 600;
+}
+
+/* 皆伝(全問通過)の帯 */
+.all-clear {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 2px;
+  border-top: 1px solid var(--shu);
+  border-bottom: 1px solid var(--shu);
+}
+
+.all-clear[hidden] {
+  display: none;
+}
+
+.all-clear p {
+  font-family: var(--serif);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--shu-ink);
+  letter-spacing: 0.02em;
 }
 
 .app {
@@ -629,14 +672,14 @@ body {
 }
 
 .button-primary {
-  background: var(--shu);
-  border-color: var(--shu);
+  background: var(--shu-btn);
+  border-color: var(--shu-btn);
   color: #fff;
   font-weight: 600;
 }
 
 .button-primary:hover {
-  border-color: var(--shu);
+  border-color: var(--shu-btn);
   filter: brightness(1.06);
 }
 
