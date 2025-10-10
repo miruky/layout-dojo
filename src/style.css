@@ -543,6 +543,20 @@ body {
   color: var(--sumi-soft);
 }
 
+/* お手本のCSSは硯(エディタ)と同じ地に置き、答案であることを示す */
+.reveal-code {
+  margin: 10px 0 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--suzuri);
+  color: var(--suzuri-text);
+  font-family: var(--mono);
+  font-size: var(--text-sm);
+  line-height: 1.7;
+  overflow-x: auto;
+  white-space: pre;
+}
+
 /* ── 庭 ── */
 
 .arena-wrap {
@@ -557,8 +571,7 @@ body {
   border: 1px solid var(--rule-strong);
   overflow: hidden;
   background:
-    repeating-linear-gradient(0deg, transparent 0 11px, var(--sand-line) 11px 12px),
-    var(--sand);
+    repeating-linear-gradient(0deg, transparent 0 11px, var(--sand-line) 11px 12px), var(--sand);
 }
 
 .arena-note {
@@ -820,6 +833,26 @@ body {
 .app-footer a:focus-visible {
   color: var(--shu-ink);
   background-size: 100% 1px;
+}
+
+/* フッターの操作はリンクと同じ見た目の素朴なボタン */
+.linklike {
+  font: inherit;
+  color: var(--sumi-soft);
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--rule-strong);
+}
+
+.linklike:hover,
+.linklike:focus-visible {
+  color: var(--shu-ink);
+  text-decoration-color: var(--shu);
 }
 
 /* ── フォーカス ── */

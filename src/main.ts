@@ -99,6 +99,10 @@ app.innerHTML = `
             <summary>ヒントを見る</summary>
             <p class="hint-body" id="task-hint"></p>
           </details>
+          <details class="hint reveal">
+            <summary>お手本のCSSを見る</summary>
+            <pre class="reveal-code"><code id="reveal-css"></code></pre>
+          </details>
         </section>
         <section class="arena-wrap" aria-labelledby="arena-head">
           <div class="section-head">
@@ -135,6 +139,7 @@ app.innerHTML = `
         採点は書いたプロパティではなく石の実測位置で行うため、別解でも一致すれば合格になります。
         進捗はこの端末のlocalStorageにだけ残ります。
         <a href="https://github.com/miruky/layout-dojo">ソースコード</a>
+        <button type="button" class="linklike" id="clear-progress">進捗をリセット</button>
       </p>
     </footer>
   </div>`;
@@ -154,6 +159,7 @@ const taskKickerEl = document.getElementById('task-kicker') as HTMLElement;
 const taskTitleEl = document.getElementById('task-title') as HTMLElement;
 const taskGoalEl = document.getElementById('task-goal') as HTMLElement;
 const taskHintEl = document.getElementById('task-hint') as HTMLElement;
+const revealCssEl = document.getElementById('reveal-css') as HTMLElement;
 const levelListEl = document.getElementById('level-list') as HTMLOListElement;
 const themeToggle = document.getElementById('theme-toggle') as HTMLButtonElement;
 
@@ -313,7 +319,8 @@ function selectLevel(index: number): void {
   taskTitleEl.textContent = level.title;
   taskGoalEl.textContent = level.goal;
   taskHintEl.textContent = level.hint;
-  (document.querySelector('.hint') as HTMLDetailsElement).open = false;
+  revealCssEl.textContent = level.targetCss;
+  for (const d of document.querySelectorAll<HTMLDetailsElement>('.hint')) d.open = false;
 
   ghost.setStones(level.stones);
   answer.setStones(level.stones);
@@ -342,6 +349,11 @@ document.getElementById('retry-button')?.addEventListener('click', () => {
 document.getElementById('next-button')?.addEventListener('click', () => {
   selectLevel(Math.min(current + 1, levels.length - 1));
   editor.focus();
+});
+
+document.getElementById('clear-progress')?.addEventListener('click', () => {
+  store.removeItem(CLEARED_KEY);
+  updateLevelList();
 });
 
 editor.addEventListener('keydown', (event) => {

@@ -46,7 +46,7 @@ describe('main', () => {
   });
 
   it('[ ] キーで前後のお題に移動できる', () => {
-    (document.querySelectorAll<HTMLButtonElement>('.level-button')[0])?.click();
+    document.querySelectorAll<HTMLButtonElement>('.level-button')[0]?.click();
     expect(location.hash).toBe('#1');
 
     document.dispatchEvent(new KeyboardEvent('keydown', { key: ']', bubbles: true }));
@@ -74,5 +74,16 @@ describe('main', () => {
     expect(root.getAttribute('data-theme')).toBe('dark');
     toggle.click();
     expect(root.hasAttribute('data-theme')).toBe(false);
+  });
+
+  it('お手本のCSSに現在のお題の正解が表示される', () => {
+    document.querySelectorAll<HTMLButtonElement>('.level-button')[0]?.click();
+    expect(document.getElementById('reveal-css')?.textContent).toBe(levels[0]?.targetCss);
+  });
+
+  it('進捗をリセットするとクリア印が消える', () => {
+    (document.getElementById('clear-progress') as HTMLButtonElement).click();
+    expect(document.querySelectorAll('.level-button.is-cleared').length).toBe(0);
+    expect(document.querySelector('#progress-count b')?.textContent).toBe('0');
   });
 });
